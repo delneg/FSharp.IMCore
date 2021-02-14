@@ -46,16 +46,8 @@ module IMSet =
     let empty<'T when 'T : comparison> : IMSet<'T> = IMSet<'T>.Empty
 
     [<CompiledName("ForAll")>]
-    let forall predicate (set: IMSet<'T>) =
-        //a little bit faster than Seq.forall, but slower than Set.forall
-        let mutable ret = true
-        if set.IsEmpty then ret
-        else
-            for i in set do
-                if not (predicate i) then
-                    ret <- false
-            ret
-            
+    let forall predicate (set: IMSet<'T>) = Seq.forall predicate set
+
     [<CompiledName("Exists")>]
     let exists predicate (set: IMSet<'T>) = Seq.exists predicate set
 
