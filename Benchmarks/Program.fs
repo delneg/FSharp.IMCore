@@ -17,10 +17,12 @@ type CustomSet() =
 
     [<GlobalSetup>]
     member this.Setup() =
-        nums <- [|for _ in 1..this.N do fake.Random.Long()|] |> Set.ofArray
-        nums2 <- [|for _ in 1..this.N do fake.Random.Long()|] |> Set.ofArray
-        numsNew <- [|for _ in 1..this.N do fake.Random.Long()|] |> IMSet.ofArray
-        nums2New <- [|for _ in 1..this.N do fake.Random.Long()|] |> IMSet.ofArray
+        let first = [|for _ in 1..this.N do fake.Random.Long()|]
+        let second = [|for _ in 1..this.N do fake.Random.Long()|]
+        nums <-  first |> Set.ofArray
+        nums2 <- second |> Set.ofArray
+        numsNew <- first |> IMSet.ofArray
+        nums2New <- second |> IMSet.ofArray
         
     [<Benchmark>]
     member _.SetForAll() = Set.forall (fun x -> x > 0L) nums
@@ -48,6 +50,26 @@ type CustomSet() =
     member _.SetFilter() = Set.filter filterPred nums
     [<Benchmark>]
     member _.IMSetFilter() = IMSet.filter filterPred numsNew
+    
+    [<Benchmark>]
+    member _.SetUnion() = Set.union nums nums2
+    [<Benchmark>]
+    member _.IMSetUnion() = IMSet.union numsNew nums2New
+    
+    [<Benchmark>]
+    member _.SetIntersect() = Set.intersect nums nums2
+    [<Benchmark>]
+    member _.IMSetIntersect() = IMSet.intersect numsNew nums2New
+    
+    [<Benchmark>]
+    member _.SetSingleton() = Set.singleton (nums,nums2)
+    [<Benchmark>]
+    member _.IMSetSingleton() = IMSet.singleton (numsNew,nums2New)
+    
+    [<Benchmark>]
+    member _.SetMinMax() = Set.minElement nums, Set.minElement nums2, Set.maxElement nums, Set.maxElement nums2
+    [<Benchmark>]
+    member _.IMSetMinMax() = IMSet.minElement numsNew, IMSet.minElement nums2New, IMSet.maxElement numsNew, IMSet.maxElement nums2New
     
 
 [<EntryPoint>]
