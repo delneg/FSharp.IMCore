@@ -8,6 +8,8 @@ Benchmarks showed that sometimes System.Collections.Immutable datastructures can
 This library tries to provide the same API as the standard collection (aside for the `IM` prefix),
 in order to be able to simply replace i.e. `Set` with `IMSet` in the whole project and make no other changes - with some perfomance boost gained.
 
+As of right now, the project is in very early stage - contributions are welcome, and please use with caution.
+I.e. IMMap vs Map perfomance is relatively poor for most cases (measured for .net 5)
 
 
 Benchmarks will be added below for the reference of which structures to use in which cases.
@@ -67,5 +69,38 @@ DefaultJob : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 
 |       SetMinMax | 10000 |        223.46 ns |       3.229 ns |       3.020 ns |    0.0172 |        - |        - |     144 B |
 |     IMSetMinMax | 10000 |         42.67 ns |       0.354 ns |       0.296 ns |    0.0057 |        - |        - |      48 B |
 
+
+</details>
+
+<details>
+<summary>Map vs IMMap</summary>
+
+
+BenchmarkDotNet=v0.12.1, OS=macOS Catalina 10.15.4 (19E287) [Darwin 19.4.0]
+Intel Core i9-9980HK CPU 2.40GHz, 1 CPU, 16 logical and 8 physical cores
+.NET Core SDK=5.0.101
+  [Host]     : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT DEBUG
+  DefaultJob : .NET Core 5.0.1 (CoreCLR 5.0.120.57516, CoreFX 5.0.120.57516), X64 RyuJIT
+
+
+
+|      Method |     N |           Mean |        Error |       StdDev |   Gen 0 |   Gen 1 | Gen 2 | Allocated |
+|------------ |------ |---------------:|-------------:|-------------:|--------:|--------:|------:|----------:|
+|   MapForAll |  1000 |       118.5 ns |      2.20 ns |      3.23 ns |  0.0029 |       - |     - |      24 B |
+| IMMapForAll |  1000 |       693.0 ns |     12.80 ns |     11.35 ns |  0.0238 |       - |     - |     200 B |
+|     MapFold |  1000 |     7,063.5 ns |    135.06 ns |    144.52 ns |       - |       - |     - |      24 B |
+|   IMMapFold |  1000 |    66,275.8 ns |  1,304.61 ns |  1,553.05 ns |       - |       - |     - |      24 B |
+|      MapMap |  1000 |    58,733.6 ns |  1,127.82 ns |  1,206.76 ns | 10.2539 |  2.5635 |     - |   85856 B |
+|    IMMapMap |  1000 |   322,247.6 ns |  6,232.85 ns |  5,830.22 ns | 10.7422 |  2.9297 |     - |   93576 B |
+|   MapFilter |  1000 |    32,976.7 ns |    646.65 ns |    718.75 ns |  2.4414 |       - |     - |   20880 B |
+| IMMapFilter |  1000 |    72,204.2 ns |  1,422.96 ns |  1,331.04 ns |       - |       - |     - |      80 B |
+|   MapForAll | 10000 |       133.9 ns |      2.60 ns |      3.97 ns |  0.0029 |       - |     - |      24 B |
+| IMMapForAll | 10000 |       639.4 ns |     11.05 ns |      9.80 ns |  0.0238 |       - |     - |     200 B |
+|     MapFold | 10000 |    27,575.8 ns |    443.66 ns |    370.47 ns |       - |       - |     - |      24 B |
+|   IMMapFold | 10000 |   239,564.8 ns |  4,673.56 ns |  5,739.55 ns |       - |       - |     - |      24 B |
+|      MapMap | 10000 |   222,304.7 ns |  4,295.62 ns |  5,275.41 ns | 35.1563 | 16.8457 |     - |  295976 B |
+|    IMMapMap | 10000 | 1,283,236.3 ns | 24,502.80 ns | 26,217.73 ns | 39.0625 | 19.5313 |     - |  331521 B |
+|   MapFilter | 10000 |   108,468.9 ns |  2,028.20 ns |  1,991.96 ns |  6.8359 |  0.2441 |     - |   58336 B |
+| IMMapFilter | 10000 |   250,490.2 ns |  5,009.87 ns |  4,920.36 ns |       - |       - |     - |      80 B |
 
 </details>

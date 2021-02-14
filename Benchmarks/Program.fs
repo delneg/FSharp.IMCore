@@ -72,7 +72,49 @@ type CustomSet() =
     member _.IMSetMinMax() = IMSet.minElement numsNew, IMSet.minElement nums2New, IMSet.maxElement numsNew, IMSet.maxElement nums2New
     
 
+
+[<PlainExporter; MemoryDiagnoser>]
+type CustomMap() =
+    [<DefaultValue; Params(1000,10000)>]
+    val mutable public N : int
+    
+    let mutable strs = Map.empty
+    let mutable strsNew = IMMap.empty
+
+    [<GlobalSetup>]
+    member this.Setup() =
+        let first = [|for _ in 1..this.N do (fake.Random.Word(), fake.Random.Long())|]
+        strs <-  first |> Map.ofArray
+        strsNew <- first |> IMMap.ofArray
+        
+    [<Benchmark>]
+    member _.MapForAll() = Map.forall (fun k v  -> v > 0L) strs
+    [<Benchmark>]
+    member _.IMMapForAll() =  IMMap.forall (fun k v  -> v > 0L) strsNew
+    
+        
+    [<Benchmark>]
+    member _.MapFold() = Map.fold (fun s _ value -> s + value) 0L strs
+    [<Benchmark>]
+    member _.IMMapFold() = IMMap.fold (fun s _ value -> s + value) 0L strsNew
+    
+    
+    [<Benchmark>]
+    member _.MapMap() = Map.map (fun _ value -> string value) strs
+    [<Benchmark>]
+    member _.IMMapMap() = IMMap.map (fun _ value -> string value) strsNew
+    
+    [<Benchmark>]
+    member _.MapFilter() =
+        Map.filter (fun (key:string) _ -> key.Length < 5) strs
+        
+    [<Benchmark>]
+    member _.IMMapFilter() =
+        IMMap.filter (fun (key:string) _ -> key.Length < 5) strsNew
+    
+
 [<EntryPoint>]
 let main argv =
-    let sets = BenchmarkRunner.Run<CustomSet>()
+//    let sets = BenchmarkRunner.Run<CustomSet>()
+    let maps = BenchmarkRunner.Run<CustomMap>()
     0 // return an integer exit code

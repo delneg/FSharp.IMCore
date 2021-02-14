@@ -78,13 +78,24 @@ module IMMap =
     let forall predicate (table: IMMap<_, _>) =
         Seq.forall (fun (KeyValue(key, value)) -> predicate key value) table
 
+    [<CompiledName("OfSeq")>]
+    let ofSeq (elements: seq<'Key * 'T>) :IMMap<'Key, 'T> =
+        IMMap.Empty.SetItems(elements |> Seq.map (fun (key,value) -> KeyValuePair(key,value)))
+     
     [<CompiledName("Map")>]
-    let map (mapping:'Key -> 'T -> 'U) (table: IMMap<_, _>) =
-        Seq.map (fun (KeyValue(key, value)) -> mapping key value) table
+    let map (mapping:'Key -> 'T -> 'U) (table: IMMap<'Key, 'T>) :IMMap<'Key, 'U>=
+        let builder = IMMap.CreateBuilder()
+        for kvp in table do
+            builder.[kvp.Key] <- mapping kvp.Key kvp.Value
+        builder.ToImmutable()
 
     [<CompiledName("Fold")>]
-    let fold<'Key, 'T, 'State when 'Key : comparison> (folder:'State -> 'Key -> 'T -> 'State) (state:'State) (table: Map<'Key, 'T>) =
-        Seq.fold (fun s (KeyValue(key, value)) -> folder s key value) state table
+    let fold<'Key, 'T, 'State when 'Key : comparison> (folder:'State -> 'Key -> 'T -> 'State) (state:'State) (table: IMMap<'Key, 'T>) =
+        let mutable s = state
+        for kvp in table do
+            s <- folder s kvp.Key kvp.Value
+        s
+    
 
     [<CompiledName("FoldBack")>]
     let foldBack<'Key, 'T, 'State  when 'Key : comparison> folder (table: Map<'Key, 'T>) (state:'State) =
@@ -104,15 +115,11 @@ module IMMap =
 
     [<CompiledName("OfList")>]
     let ofList (elements: ('Key * 'Value) list)  :IMMap<'Key, 'Value> =
-        IMMap.CreateRange(elements |> List.map (fun (key,value) -> KeyValuePair(key,value)))
-
-    [<CompiledName("OfSeq")>]
-    let ofSeq (elements: seq<'Key * 'T>) :IMMap<'Key, 'T> =
-        IMMap.CreateRange(elements |> Seq.map (fun (key,value) -> KeyValuePair(key,value)))
+        IMMap.Empty.SetItems(elements |> List.map (fun (key,value) -> KeyValuePair(key,value)))
 
     [<CompiledName("OfArray")>]
     let ofArray (elements: ('Key * 'Value) array) :IMMap<_, _> = 
-       IMMap.CreateRange(elements |> Array.map (fun (key,value) -> KeyValuePair(key,value)))
+       IMMap.Empty.SetItems(elements |> Array.map (fun (key,value) -> KeyValuePair(key,value)))
 
     [<CompiledName("ToList")>]
     let toList (table: IMMap<_, _>) =
@@ -123,7 +130,7 @@ module IMMap =
         Seq.map (fun (KeyValue(key, value)) -> (key,value)) table |> Seq.toArray
 
     [<CompiledName("Empty")>]
-    let empty<'Key, 'Value  when 'Key : comparison> =
+    let empty<'Key, 'Value  when 'Key : comparison> :IMMap<_, _>=
         IMMap<'Key, 'Value>.Empty
 
     [<CompiledName("Count")>]
