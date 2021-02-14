@@ -1,4 +1,4 @@
-# FSharp.System.Collections.Immutable
+# FSharp.IMCore
 
 
 This repo hosts opinionated view on F# usage of System.Collections.Immutable
