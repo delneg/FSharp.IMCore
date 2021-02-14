@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>F# bindings for System.Collections.Immutable</Description>
+    <AssemblyTitle>FSharp.System.Collections.Immutable</AssemblyTitle>
+    <ProductName>FSharp.System.Collections.Immutable</ProductName>
+    <Version>0.1.0</Version>
+    <Authors>delneg</Authors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>FSharp.System.Collections.Immutable</PackageId>
+    <PackageTags>System;Immutable;Collections;FSharp;F#</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/delneg/FSharp.System.Collections.Immutable/</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+<!--    <Compile Include="immutable-collection-util.fs" />-->
+<!--    <Compile Include="flat-list.fs" />-->
+<!--    <Compile Include="stack.fs" />-->
+<!--    <Compile Include="immutable-list.fs" />-->
+<!--    <Compile Include="queue.fs" />-->
+<!--    <Compile Include="indexed-seq.fs" />-->
+<!--    <Compile Include="maps.fs" />-->
+    <Compile Include="IMSet.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+  </ItemGroup>
+
+</Project>
