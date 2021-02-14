@@ -59,8 +59,13 @@ module IMSet =
 
     [<CompiledName("Fold")>]
     let fold<'T, 'State  when 'T : comparison> folder (state:'State) (set: IMSet<'T>) =
-        Seq.fold folder state set
-
+        use mutable e = set.GetEnumerator()
+        let f = OptimizedClosures.FSharpFunc<_, _, _>.Adapt folder
+        let mutable state = state
+        while e.MoveNext() do
+            state <- f.Invoke(state, e.Current)
+        state
+        
     [<CompiledName("FoldBack")>]
     let foldBack<'T, 'State when 'T : comparison> (folder:'T -> 'State -> 'State) (set: IMSet<'T>) (state:'State) =
         Seq.foldBack folder set state
