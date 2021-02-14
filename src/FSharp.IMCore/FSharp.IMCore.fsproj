@@ -24,6 +24,7 @@
 <!--    <Compile Include="indexed-seq.fs" />-->
 <!--    <Compile Include="maps.fs" />-->
     <Compile Include="IMSet.fs" />
+    <Compile Include="IMMap.fs" />
   </ItemGroup>
 
   <ItemGroup>

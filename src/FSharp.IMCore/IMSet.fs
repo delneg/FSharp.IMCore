@@ -62,8 +62,8 @@ module IMSet =
         Seq.fold folder state set
 
     [<CompiledName("FoldBack")>]
-    let foldBack<'T, 'State when 'T : comparison> folder (set: IMSet<'T>) (state:'State) =
-        Seq.fold folder state set
+    let foldBack<'T, 'State when 'T : comparison> (folder:'T -> 'State -> 'State) (set: IMSet<'T>) (state:'State) =
+        Seq.foldBack folder set state
 
     [<CompiledName("Map")>]
     let map mapping (set: IMSet<'T>) = Seq.map mapping set |> ofSeq
