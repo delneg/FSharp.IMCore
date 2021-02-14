@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>F# bindings for System.Collections.Immutable</Description>
-    <AssemblyTitle>FSharp.System.Collections.Immutable</AssemblyTitle>
-    <ProductName>FSharp.System.Collections.Immutable</ProductName>
+    <Description>Opinionated FSharp.Core replacement using System.Collections.Immutable</Description>
+    <AssemblyTitle>FSharp.IMCore</AssemblyTitle>
+    <ProductName>FSharp.IMCore</ProductName>
     <Version>0.1.0</Version>
     <Authors>delneg</Authors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>FSharp.System.Collections.Immutable</PackageId>
+    <PackageId>FSharp.IMCore</PackageId>
     <PackageTags>System;Immutable;Collections;FSharp;F#</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/delneg/FSharp.System.Collections.Immutable/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/delneg/FSharp.IMCore/</RepositoryUrl>
+    <RootNamespace>FSharp.IMCore</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

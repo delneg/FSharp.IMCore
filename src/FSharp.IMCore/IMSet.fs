@@ -1,4 +1,4 @@
-﻿namespace FSharp.System.Collections.Immutable
+﻿namespace FSharp.IMCore
 
 type IMSet<'T> = System.Collections.Immutable.ImmutableSortedSet<'T>
 type IMSet = System.Collections.Immutable.ImmutableSortedSet
