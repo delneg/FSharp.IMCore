@@ -1,4 +1,5 @@
 namespace FSharp.IMCore
+open System.Collections.Generic
 open System.Collections.Immutable
 
 
@@ -162,15 +163,24 @@ module IMList =
             |Some item -> builder.Add item
             |None -> ()
         builder.ToImmutable()
+    
+    [<CompiledName("Choose2")>]
+    let choose2 (chooser:'T -> 'U option) (list:IMList<'T>) :IMList<'U> =
+        Seq.choose chooser list |> ofSeq
 
-//    [<CompiledName("SplitAt")>]
-//    let splitAt index (list:IMList<'T>) = Microsoft.FSharp.Primitives.Basics.List.splitAt index list
-//
-//    [<CompiledName("Take")>]
-//    let take count (list: IMList<'T>) = Microsoft.FSharp.Primitives.Basics.List.take count list
-//
-//    [<CompiledName("TakeWhile")>]
-//    let takeWhile predicate (list: IMList<'T>) = Microsoft.FSharp.Primitives.Basics.List.takeWhile predicate list
+    [<CompiledName("Skip")>]
+    let skip index (list:IMList<'T>) :IMList<'T>=
+        check list
+        list.RemoveRange(0, index)
+    
+    [<CompiledName("Take")>]
+    let take count (list: IMList<'T>) :IMList<'T>=
+        check list
+        list.RemoveRange(count, list.Count - count)
+
+    [<CompiledName("SplitAt")>]
+    let splitAt index (list:IMList<'T>) = take index list, skip index list
+
 
     [<CompiledName("IterateIndexed")>]
     let inline iteri action (list: IMList<'T>) =
@@ -246,8 +256,8 @@ module IMList =
 //    let scan<'T, 'State> folder (state:'State) (list:IMList<'T>) =
 //        Microsoft.FSharp.Primitives.Basics.List.scan folder state list
 //
-//    [<CompiledName("Singleton")>]
-//    let inline singleton value = [value]
+    [<CompiledName("Singleton")>]
+    let inline singleton value :IMList<'T> = IMList.Create(item = value)
 //
 //    [<CompiledName("Fold2")>]
 //    let fold2<'T1, 'T2, 'State> folder (state:'State) (list1:list<'T1>) (list2:list<'T2>) =
@@ -423,17 +433,19 @@ module IMList =
 //            | None -> pick chooser t
 //            | Some r -> r
 //
-//    [<CompiledName("Filter")>]
-//    let filter predicate list = Microsoft.FSharp.Primitives.Basics.List.filter predicate list
-//
-//    [<CompiledName("Except")>]
-//    let except (itemsToExclude: seq<'T>) list =
-//        checkNonNull "itemsToExclude" itemsToExclude
-//        match list with
-//        | [] -> list
-//        | _ ->
-//            let cached = HashSet(itemsToExclude, HashIdentity.Structural)
-//            list |> filter cached.Add
+    [<CompiledName("Filter")>]
+    let filter predicate (list:IMList<'T>) :IMList<'T>=
+        check list
+        list.RemoveAll(System.Predicate(predicate >> not))
+
+    [<CompiledName("ExceptWith")>]
+    let exceptWith (comparer: IEqualityComparer<_>) items (list: IMList<'a>) :IMList<'a> =
+        check list
+        list.RemoveRange(items, comparer)
+        
+    [<CompiledName("Except")>]
+    let except (itemsToExclude: seq<'T>) list =
+        exceptWith HashIdentity.Structural itemsToExclude list
 //
 //    [<CompiledName("Where")>]
 //    let where predicate list = Microsoft.FSharp.Primitives.Basics.List.filter predicate list
@@ -477,21 +489,31 @@ module IMList =
 //    [<CompiledName("Zip3")>]
 //    let zip3 list1 list2 list3 = Microsoft.FSharp.Primitives.Basics.List.zip3 list1 list2 list3
 //
-//    [<CompiledName("Skip")>]
-//    let skip count list =
-//        if count <= 0 then list else
-//        let rec loop i lst =
-//            match lst with
-//            | _ when i = 0 -> lst
-//            | _ :: t -> loop (i-1) t
-//            | [] -> invalidArgOutOfRange "count" count "distance past the list" i
-//        loop count list
-//
-//    [<CompiledName("SkipWhile")>]
-//    let rec skipWhile predicate list =
-//        match list with
-//        | head :: tail when predicate head -> skipWhile predicate tail
-//        | _ -> list
+
+
+    [<CompiledName("SkipWhile")>]
+    let skipWhile predicate list =
+        let condition = ref true
+        filter (fun item ->
+            if !condition then
+                condition := !condition && predicate item
+                !condition
+            else false) list
+
+    [<CompiledName("SkipUntil")>]
+    let skipUntil predicate list = skipWhile (not << predicate) list
+
+    [<CompiledName("TakeWhile")>]
+    let takeWhile predicate list =
+        let condition = ref true
+        filter (fun item ->
+            if !condition then
+                condition := !condition && predicate item
+                not !condition
+            else true) list
+    
+    [<CompiledName("TakeUntil")>]
+    let takeUntil predicate list = takeWhile (not << predicate) list
 //
 //    [<CompiledName("SortWith")>]
 //    let sortWith comparer list =

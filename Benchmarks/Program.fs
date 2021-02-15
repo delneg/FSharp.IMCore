@@ -145,6 +145,34 @@ type CustomList() =
         IMList.choose (fun x -> if x > 0L then Some x else None) numsNew
         
     [<Benchmark>]
+    member _.IMListChoose2() =
+        IMList.choose2 (fun x -> if x > 0L then Some x else None) numsNew
+    
+    [<Benchmark>]
+    member _.ListFilter() =
+        List.filter filterPred nums
+        
+    [<Benchmark>]
+    member _.IMListFilter() =
+        IMList.filter filterPred numsNew
+    
+    [<Benchmark>]
+    member _.ListSkip() =
+        List.skip 10 nums
+        
+    [<Benchmark>]
+    member _.IMListSkip() =
+        IMList.skip 10 numsNew
+    
+    [<Benchmark>]
+    member _.ListSplitAt() =
+        List.splitAt 100 nums
+        
+    [<Benchmark>]
+    member _.IMListSplitAt() =
+        IMList.splitAt 100 numsNew
+    
+    [<Benchmark>]
     member _.ListFold() = List.fold (+) 0L nums
     [<Benchmark>]
     member _.IMListFold() = IMList.fold (+) 0L numsNew
@@ -153,11 +181,6 @@ type CustomList() =
     member _.ListMap() = List.map string nums
     [<Benchmark>]
     member _.IMListMap() = IMList.map string numsNew
-    
-//    [<Benchmark>]
-//    member _.ListFilter() = List.filter filterPred nums
-//    [<Benchmark>]
-//    member _.IMListFilter() = IMList.filter filterPred numsNew
     
     [<Benchmark>]
     member _.ListAppend() = List.append nums nums2
@@ -169,10 +192,10 @@ type CustomList() =
 //    [<Benchmark>]
 //    member _.IMListIntersect() = IMList.intersect numsNew nums2New
 //    
-//    [<Benchmark>]
-//    member _.ListSingleton() = List.singleton (nums,nums2)
-//    [<Benchmark>]
-//    member _.IMListSingleton() = IMList.singleton (numsNew,nums2New)
+    [<Benchmark>]
+    member _.ListSingleton() = List.singleton (nums,nums2)
+    [<Benchmark>]
+    member _.IMListSingleton() = IMList.singleton (numsNew,nums2New)
 //    
 //    [<Benchmark>]
 //    member _.ListMinMax() = List.minElement nums, List.minElement nums2, List.maxElement nums, List.maxElement nums2
