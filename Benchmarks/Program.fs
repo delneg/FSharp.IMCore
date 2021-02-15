@@ -196,6 +196,17 @@ type CustomList() =
     member _.ListSingleton() = List.singleton (nums,nums2)
     [<Benchmark>]
     member _.IMListSingleton() = IMList.singleton (numsNew,nums2New)
+    
+    [<Benchmark>]
+    member _.ListSum() = List.sum nums
+    [<Benchmark>]
+    member _.IMListSum() = IMList.sum numsNew
+    
+    [<Benchmark>]
+    member _.ListSumBy() = List.sumBy (fun x -> x * 2L) nums
+    [<Benchmark>]
+    member _.IMListSumBy() = IMList.sumBy (fun x -> x * 2L) numsNew
+    
 //    
 //    [<Benchmark>]
 //    member _.ListMinMax() = List.minElement nums, List.minElement nums2, List.maxElement nums, List.maxElement nums2

@@ -581,25 +581,26 @@ module IMList =
 //    [<CompiledName("TryFindIndexBack")>]
 //    let tryFindIndexBack predicate list = list |> toArray |> Microsoft.FSharp.Primitives.Basics.Array.tryFindIndexBack predicate
 //
-//    [<CompiledName("Sum")>]
-//    let inline sum (list:list<'T>) =
-//        match list with
-//        | [] -> LanguagePrimitives.GenericZero<'T>
-//        | t ->
-//            let mutable acc = LanguagePrimitives.GenericZero<'T>
-//            for x in t do
-//                acc <- Checked.(+) acc x
-//            acc
-//
-//    [<CompiledName("SumBy")>]
-//    let inline sumBy (projection: 'T -> 'U) (list:list<'T>) =
-//        match list with
-//        | [] -> LanguagePrimitives.GenericZero<'U>
-//        | t ->
-//            let mutable acc = LanguagePrimitives.GenericZero<'U>
-//            for x in t do
-//                acc <- Checked.(+) acc (projection x)
-//            acc
+    [<CompiledName("Sum")>]
+    let inline sum (list:IMList<'T>) =
+        if list.Count = 0 then
+            LanguagePrimitives.GenericZero<'T>
+        else
+            let mutable acc = LanguagePrimitives.GenericZero<'T>
+            for x in list do
+                acc <- Checked.(+) acc x
+            acc
+
+    [<CompiledName("SumBy")>]
+    let inline sumBy (projection: 'T -> 'U) (list:IMList<'T>) =
+        if list.Count = 0 then
+            LanguagePrimitives.GenericZero<'T>
+        else
+            let mutable acc = LanguagePrimitives.GenericZero<'T>
+            for x in list do
+                acc <- Checked.(+) acc (projection x)
+            acc
+            
 //
 //    [<CompiledName("Max")>]
 //    let inline max (list:list<_>) =
