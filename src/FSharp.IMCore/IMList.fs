@@ -6,7 +6,6 @@ open System.Collections.Immutable
 type IMList<'T> = System.Collections.Immutable.ImmutableList<'T>
 type IMList = System.Collections.Immutable.ImmutableList
 
-
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 [<RequireQualifiedAccess>]
 module IMList =
@@ -26,6 +25,7 @@ module IMList =
         check list
         list.RemoveAt index
 
+    
     [<CompiledName("Length")>]
     let length (list: IMList<'T>) = list.Count
 
@@ -80,8 +80,8 @@ module IMList =
 
     [<CompiledName("Map")>]
     let map mapping (list:IMList<'T>) :IMList<'U> =
-        list.ConvertAll(new System.Func<'T,'U>(mapping))
-
+        System.Linq.Enumerable.Select(list,new System.Func<'T,'U>(mapping) ) |> ofSeq
+        
 //    [<CompiledName("MapIndexed")>]
 //    let mapi mapping list = Microsoft.FSharp.Primitives.Basics.List.mapi mapping list
 //
@@ -189,14 +189,13 @@ module IMList =
         let builder = IMList.CreateBuilder()
         for i = 0 to length - 1 do
             builder.Add <| initializer i
-//
-//    [<CompiledName("Replicate")>]
-//    let replicate count initial =
-//        if count < 0 then invalidArg "count" (SR.GetString(SR.inputMustBeNonNegative))
-//        let mutable result = []
-//        for i in 0..count-1 do
-//           result <- initial :: result
-//        result
+
+    [<CompiledName("Replicate")>]
+    let replicate (count:int) (initial: 'T) :IMList<'T> =
+        let builder = IMList.CreateBuilder()
+        for i in 0..count-1 do
+           builder.Add(initial)
+        builder.ToImmutable()
 //
 //    [<CompiledName("Iterate2")>]
 //    let iter2 action list1 list2 =
@@ -246,11 +245,9 @@ module IMList =
 //    let pairwise (list: IMList<'T>) =
 //        Microsoft.FSharp.Primitives.Basics.List.pairwise list
 //
-//    [<CompiledName("Reduce")>]
-//    let reduce reduction list =
-//        match list with
-//        | [] -> invalidArg "list" (SR.GetString(SR.inputListWasEmpty))
-//        | h :: t -> fold reduction h t
+    [<CompiledName("Reduce")>]
+    let reduce (reduction:'T -> 'T -> 'T) (list: IMList<'T>) =
+        System.Linq.Enumerable.Aggregate(list,new System.Func<'T,'T,'T>(reduction))
 //
 //    [<CompiledName("Scan")>]
 //    let scan<'T, 'State> folder (state:'State) (list:IMList<'T>) =
@@ -371,10 +368,11 @@ module IMList =
 //
     [<CompiledName("ForAll")>]
     let forall predicate (list: IMList<'T>) = list.TrueForAll(System.Predicate(predicate))
-//
-//    [<CompiledName("Exists")>]
-//    let exists predicate list = Microsoft.FSharp.Primitives.Basics.List.exists predicate list
-//
+
+    [<CompiledName("Exists")>]
+    let exists predicate (list: IMList<'T>) =
+        list.Exists(System.Predicate(predicate))
+
     [<CompiledName("Contains")>]
     let inline contains value (source:IMList<'T>) :bool =
         source.Contains(value)
@@ -393,17 +391,15 @@ module IMList =
 //            let f = OptimizedClosures.FSharpFunc<_, _, _>.Adapt(predicate)
 //            exists2aux f list1 list2
 //
-//    [<CompiledName("Find")>]
-//    let rec find predicate list = 
-//        match list with
-//        | [] -> indexNotFound()
-//        | h :: t -> if predicate h then h else find predicate t
-//
-//    [<CompiledName("TryFind")>]
-//    let rec tryFind predicate list =
-//        match list with
-//        | [] -> None 
-//        | h :: t -> if predicate h then Some h else tryFind predicate t
+    [<CompiledName("Find")>]
+    let rec find predicate (list: IMList<'T>) = 
+        list.Find(System.Predicate(predicate))
+
+    [<CompiledName("TryFind")>]
+    let rec tryFind predicate (list: IMList<'T>) =
+        match list.FindIndex(System.Predicate(predicate)) with
+        | -1 -> None
+        | x -> Some list.[x]
 //
 //    [<CompiledName("FindBack")>]
 //    let findBack predicate list = list |> toArray |> Microsoft.FSharp.Primitives.Basics.Array.findBack predicate
@@ -411,15 +407,14 @@ module IMList =
 //    [<CompiledName("TryFindBack")>]
 //    let tryFindBack predicate list = list |> toArray |> Microsoft.FSharp.Primitives.Basics.Array.tryFindBack predicate
 //
-//    [<CompiledName("TryPick")>]
-//    let rec tryPick chooser list =
-//        match list with
-//        | [] -> None
-//        | h :: t ->
-//            match chooser h with
-//            | None -> tryPick chooser t
-//            | r -> r
-//
+    [<CompiledName("TryPick")>]
+    let rec tryPick (chooser:'T -> 'U option) (list: IMList<'T>) =
+        if list.Count = 0 then None
+        else
+            match chooser (head list) with
+            | None -> tryPick chooser  (tail list)
+            | r -> r
+
 //    [<CompiledName("Pick")>]
 //    let rec pick chooser list =
 //        match list with
@@ -529,14 +524,11 @@ module IMList =
 //            Microsoft.FSharp.Primitives.Basics.Array.stableSortInPlaceBy projection array
 //            Microsoft.FSharp.Primitives.Basics.List.ofArray array
 //
-//    [<CompiledName("Sort")>]
-//    let sort list =
-//        match list with
-//        | [] | [_] -> list
-//        | _ ->
-//            let array = Microsoft.FSharp.Primitives.Basics.List.toArray list
-//            Microsoft.FSharp.Primitives.Basics.Array.stableSortInPlace array
-//            Microsoft.FSharp.Primitives.Basics.List.ofArray array
+    [<CompiledName("Sort")>]
+    let sort (list: IMList<'T>) =
+        match list.Count with
+        | 0 | 1 -> list
+        | _ -> list.Sort()
 //
 //    [<CompiledName("SortByDescending")>]
 //    let inline sortByDescending projection list =
@@ -550,9 +542,9 @@ module IMList =
 //
 //    
 //
-//    [<CompiledName("ToSeq")>]
-//    let toSeq list = Seq.ofList list
-//
+    [<CompiledName("ToSeq")>]
+    let toSeq (list:IMList<'T>) = list :> seq<'T>
+
 //    [<CompiledName("FindIndex")>]
 //    let findIndex predicate list =
 //        let rec loop n list = 
@@ -702,11 +694,9 @@ module IMList =
 //        | []  -> invalidArg "source" LanguagePrimitives.ErrorStrings.InputSequenceEmptyString
 //        | _   -> invalidArg "source" (SR.GetString(SR.inputSequenceTooLong))
 //
-//    [<CompiledName("TryExactlyOne")>]
-//    let tryExactlyOne (list: list<_>) =
-//        match list with
-//        | [x] -> Some x
-//        | _   -> None
+    [<CompiledName("TryExactlyOne")>]
+    let tryExactlyOne (list: IMList<'a>) =
+        if list.Count = 1 then Some list.[0] else None
 //
 //    [<CompiledName("Transpose")>]
 //    let transpose (lists: seq<IMList<'T>>) =

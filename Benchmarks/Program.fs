@@ -121,15 +121,21 @@ type CustomList() =
     let mutable nums2 = List.empty
     let mutable numsNew = IMList.empty
     let mutable nums2New = IMList.empty
+    
+    let mutable numsSmall = List.empty
+    let mutable numsNewSmall = IMList.empty
 
     [<GlobalSetup>]
     member this.Setup() =
         let first = [|for _ in 1..this.N do fake.Random.Long()|]
         let second = [|for _ in 1..this.N do fake.Random.Long()|]
+        let small = [|for _ in 1..this.N do fake.Random.Long(1L,1000L)|]
         nums <-  first |> List.ofArray
         nums2 <- second |> List.ofArray
         numsNew <- first |> IMList.ofArray
         nums2New <- second |> IMList.ofArray
+        numsSmall <- small |> List.ofArray
+        numsNewSmall <- small |> IMList.ofArray
         
     [<Benchmark>]
     member _.ListForAll() = List.forall (fun x -> x > 0L) nums
@@ -173,9 +179,14 @@ type CustomList() =
         IMList.splitAt 100 numsNew
     
     [<Benchmark>]
-    member _.ListFold() = List.fold (+) 0L nums
+    member _.ListFold() = List.fold (+) 0L numsSmall
     [<Benchmark>]
-    member _.IMListFold() = IMList.fold (+) 0L numsNew
+    member _.IMListFold() = IMList.fold (+) 0L numsNewSmall
+    
+    [<Benchmark>]
+    member _.ListReduce() = List.reduce (+) numsSmall
+    [<Benchmark>]
+    member _.IMListReduce() = IMList.reduce (+) numsNewSmall
     
     [<Benchmark>]
     member _.ListMap() = List.map string nums
@@ -187,25 +198,20 @@ type CustomList() =
     [<Benchmark>]
     member _.IMListAppend() = IMList.append numsNew nums2New
     
-//    [<Benchmark>]
-//    member _.ListIntersect() = List.intersect nums nums2
-//    [<Benchmark>]
-//    member _.IMListIntersect() = IMList.intersect numsNew nums2New
-//    
     [<Benchmark>]
     member _.ListSingleton() = List.singleton (nums,nums2)
     [<Benchmark>]
     member _.IMListSingleton() = IMList.singleton (numsNew,nums2New)
     
     [<Benchmark>]
-    member _.ListSum() = List.sum nums
+    member _.ListSum() = List.sum numsSmall
     [<Benchmark>]
-    member _.IMListSum() = IMList.sum numsNew
+    member _.IMListSum() = IMList.sum numsNewSmall
     
     [<Benchmark>]
-    member _.ListSumBy() = List.sumBy (fun x -> x * 2L) nums
+    member _.ListSumBy() = List.sumBy (fun x -> x / 2L) numsSmall
     [<Benchmark>]
-    member _.IMListSumBy() = IMList.sumBy (fun x -> x * 2L) numsNew
+    member _.IMListSumBy() = IMList.sumBy (fun x -> x / 2L) numsNewSmall
     
     
     [<Benchmark>]
@@ -219,7 +225,16 @@ type CustomList() =
     [<Benchmark>]
     member _.IMListInit() = IMList.init 1000 (fun _ -> fake.Random.Long())
     
-//    
+    [<Benchmark>]
+    member _.ListTryFind() = List.tryFind (fun x -> x > 900L) numsSmall
+    [<Benchmark>]
+    member _.IMListTryFind() = IMList.tryFind (fun x -> x > 900L) numsNewSmall
+    
+    [<Benchmark>]
+    member _.ListTryPick() = List.tryPick (fun x -> if x > 1000L then Some x else None) numsSmall
+    [<Benchmark>]
+    member _.IMListTryPick() = IMList.tryPick (fun x -> if x > 1000L then Some x else None) numsNewSmall
+    
 //    [<Benchmark>]
 //    member _.ListMinMax() = List.minElement nums, List.minElement nums2, List.maxElement nums, List.maxElement nums2
 //    [<Benchmark>]
