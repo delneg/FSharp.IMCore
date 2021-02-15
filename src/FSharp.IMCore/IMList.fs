@@ -80,10 +80,7 @@ module IMList =
 
     [<CompiledName("Map")>]
     let map mapping (list:IMList<'T>) :IMList<'U> =
-        let builder = IMList.CreateBuilder()
-        for item in list do
-            builder.Add(mapping item)
-        builder.ToImmutable()
+        list.ConvertAll(new System.Func<'T,'U>(mapping))
 
 //    [<CompiledName("MapIndexed")>]
 //    let mapi mapping list = Microsoft.FSharp.Primitives.Basics.List.mapi mapping list
@@ -373,7 +370,7 @@ module IMList =
 //            forall2aux f list1 list2
 //
     [<CompiledName("ForAll")>]
-    let forall predicate (list: IMList<'T>) = Seq.forall predicate list
+    let forall predicate (list: IMList<'T>) = list.TrueForAll(System.Predicate(predicate))
 //
 //    [<CompiledName("Exists")>]
 //    let exists predicate list = Microsoft.FSharp.Primitives.Basics.List.exists predicate list
