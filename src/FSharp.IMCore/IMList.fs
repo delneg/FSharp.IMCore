@@ -187,8 +187,11 @@ module IMList =
         let mutable n = 0
         for x in list do action n x; n <- n + 1
 
-//    [<CompiledName("Initialize")>]
-//    let init length initializer = Microsoft.FSharp.Primitives.Basics.List.init length initializer
+    [<CompiledName("Initialize")>]
+    let init length initializer =
+        let builder = IMList.CreateBuilder()
+        for i = 0 to length - 1 do
+            builder.Add <| initializer i
 //
 //    [<CompiledName("Replicate")>]
 //    let replicate count initial =
@@ -375,13 +378,9 @@ module IMList =
 //    [<CompiledName("Exists")>]
 //    let exists predicate list = Microsoft.FSharp.Primitives.Basics.List.exists predicate list
 //
-//    [<CompiledName("Contains")>]
-//    let inline contains value source =
-//        let rec contains e xs1 =
-//            match xs1 with
-//            | [] -> false
-//            | h1 :: t1 -> e = h1 || contains e t1
-//        contains value source
+    [<CompiledName("Contains")>]
+    let inline contains value (source:IMList<'T>) :bool =
+        source.Contains(value)
 //
 //    let rec exists2aux (f:OptimizedClosures.FSharpFunc<_, _, _>) list1 list2 =
 //        match list1, list2 with
@@ -676,8 +675,9 @@ module IMList =
 //                count <- count + 1
 //            LanguagePrimitives.DivideByInt sum count
 //
-//    [<CompiledName("Collect")>]
-//    let collect mapping list = Microsoft.FSharp.Primitives.Basics.List.collect mapping list
+    [<CompiledName("Collect")>]
+    let collect mapping list =
+        concat <| map mapping list
 //
 //    [<CompiledName("AllPairs")>]
 //    let allPairs list1 list2 = Microsoft.FSharp.Primitives.Basics.List.allPairs list1 list2
@@ -716,8 +716,9 @@ module IMList =
 //        checkNonNull "lists" lists
 //        Microsoft.FSharp.Primitives.Basics.List.transpose (ofSeq lists)
 //
-//    [<CompiledName("Truncate")>]
-//    let truncate count list = Microsoft.FSharp.Primitives.Basics.List.truncate count list
+    [<CompiledName("Truncate")>]
+    let truncate count list =
+        if count < length list then take count list else list
 //
 //    [<CompiledName("Unfold")>]
 //    let unfold<'T, 'State> (generator:'State -> ('T*'State) option) (state:'State) = Microsoft.FSharp.Primitives.Basics.List.unfold generator state

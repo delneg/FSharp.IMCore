@@ -207,6 +207,18 @@ type CustomList() =
     [<Benchmark>]
     member _.IMListSumBy() = IMList.sumBy (fun x -> x * 2L) numsNew
     
+    
+    [<Benchmark>]
+    member _.ListContains() = List.contains (fake.Random.Long()) nums
+    [<Benchmark>]
+    member _.IMListContains() = IMList.contains (fake.Random.Long()) numsNew
+
+
+    [<Benchmark>]
+    member _.ListInit() = List.init 1000 (fun _ -> fake.Random.Long())
+    [<Benchmark>]
+    member _.IMListInit() = IMList.init 1000 (fun _ -> fake.Random.Long())
+    
 //    
 //    [<Benchmark>]
 //    member _.ListMinMax() = List.minElement nums, List.minElement nums2, List.maxElement nums, List.maxElement nums2
