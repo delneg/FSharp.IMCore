@@ -112,9 +112,78 @@ type CustomMap() =
     member _.IMMapFilter() =
         IMMap.filter (fun (key:string) _ -> key.Length < 5) strsNew
     
+[<PlainExporter; MemoryDiagnoser>]
+type CustomList() =
+    [<DefaultValue; Params(1000,10000)>]
+    val mutable public N : int
+    
+    let mutable nums = List.empty
+    let mutable nums2 = List.empty
+    let mutable numsNew = IMList.empty
+    let mutable nums2New = IMList.empty
+
+    [<GlobalSetup>]
+    member this.Setup() =
+        let first = [|for _ in 1..this.N do fake.Random.Long()|]
+        let second = [|for _ in 1..this.N do fake.Random.Long()|]
+        nums <-  first |> List.ofArray
+        nums2 <- second |> List.ofArray
+        numsNew <- first |> IMList.ofArray
+        nums2New <- second |> IMList.ofArray
+        
+    [<Benchmark>]
+    member _.ListForAll() = List.forall (fun x -> x > 0L) nums
+    [<Benchmark>]
+    member _.IMListForAll() =  IMList.forall (fun x -> x > 0L) numsNew
+    
+    [<Benchmark>]
+    member _.ListChoose() =
+        List.choose (fun x -> if x > 0L then Some x else None) nums
+        
+    [<Benchmark>]
+    member _.IMListChoose() =
+        IMList.choose (fun x -> if x > 0L then Some x else None) numsNew
+        
+    [<Benchmark>]
+    member _.ListFold() = List.fold (+) 0L nums
+    [<Benchmark>]
+    member _.IMListFold() = IMList.fold (+) 0L numsNew
+    
+    [<Benchmark>]
+    member _.ListMap() = List.map string nums
+    [<Benchmark>]
+    member _.IMListMap() = IMList.map string numsNew
+    
+//    [<Benchmark>]
+//    member _.ListFilter() = List.filter filterPred nums
+//    [<Benchmark>]
+//    member _.IMListFilter() = IMList.filter filterPred numsNew
+    
+    [<Benchmark>]
+    member _.ListAppend() = List.append nums nums2
+    [<Benchmark>]
+    member _.IMListAppend() = IMList.append numsNew nums2New
+    
+//    [<Benchmark>]
+//    member _.ListIntersect() = List.intersect nums nums2
+//    [<Benchmark>]
+//    member _.IMListIntersect() = IMList.intersect numsNew nums2New
+//    
+//    [<Benchmark>]
+//    member _.ListSingleton() = List.singleton (nums,nums2)
+//    [<Benchmark>]
+//    member _.IMListSingleton() = IMList.singleton (numsNew,nums2New)
+//    
+//    [<Benchmark>]
+//    member _.ListMinMax() = List.minElement nums, List.minElement nums2, List.maxElement nums, List.maxElement nums2
+//    [<Benchmark>]
+//    member _.IMListMinMax() = IMList.minElement numsNew, IMList.minElement nums2New, IMList.maxElement numsNew, IMList.maxElement nums2New
+//    
+
 
 [<EntryPoint>]
 let main argv =
 //    let sets = BenchmarkRunner.Run<CustomSet>()
-    let maps = BenchmarkRunner.Run<CustomMap>()
+//    let maps = BenchmarkRunner.Run<CustomMap>()
+    let lists = BenchmarkRunner.Run<CustomList>()
     0 // return an integer exit code

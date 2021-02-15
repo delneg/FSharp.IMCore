@@ -221,16 +221,16 @@ module IMList =
 //    [<CompiledName("Map2")>]
 //    let map2 mapping list1 list2 = Microsoft.FSharp.Primitives.Basics.List.map2 mapping list1 list2
 //
-//    [<CompiledName("Fold")>]
-//    let fold<'T, 'State> folder (state:'State) (list: IMList<'T>) =
-//        match list with
-//        | [] -> state
-//        | _ ->
-//            let f = OptimizedClosures.FSharpFunc<_, _, _>.Adapt(folder)
-//            let mutable acc = state
-//            for x in list do
-//                acc <- f.Invoke(acc, x)
-//            acc
+    [<CompiledName("Fold")>]
+    let fold<'T, 'State> folder (state:'State) (list: IMList<'T>) =
+        match list.Count with
+        | 0 -> state
+        | _ ->
+            let f = OptimizedClosures.FSharpFunc<_, _, _>.Adapt(folder)
+            let mutable acc = state
+            for x in list do
+                acc <- f.Invoke(acc, x)
+            acc
 //
 //    [<CompiledName("Pairwise")>]
 //    let pairwise (list: IMList<'T>) =
@@ -359,8 +359,8 @@ module IMList =
 //            let f = OptimizedClosures.FSharpFunc<_, _, _>.Adapt(predicate)
 //            forall2aux f list1 list2
 //
-//    [<CompiledName("ForAll")>]
-//    let forall predicate list = Microsoft.FSharp.Primitives.Basics.List.forall predicate list
+    [<CompiledName("ForAll")>]
+    let forall predicate (list: IMList<'T>) = Seq.forall predicate list
 //
 //    [<CompiledName("Exists")>]
 //    let exists predicate list = Microsoft.FSharp.Primitives.Basics.List.exists predicate list
