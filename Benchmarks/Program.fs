@@ -244,7 +244,7 @@ type CustomList() =
 
 [<EntryPoint>]
 let main argv =
-//    let sets = BenchmarkRunner.Run<CustomSet>()
+    let sets = BenchmarkRunner.Run<CustomSet>()
 //    let maps = BenchmarkRunner.Run<CustomMap>()
-    let lists = BenchmarkRunner.Run<CustomList>()
+//    let lists = BenchmarkRunner.Run<CustomList>()
     0 // return an integer exit code
