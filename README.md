@@ -72,6 +72,40 @@ DefaultJob : .NET 6.0.0 (6.0.21.52210), X64 RyuJIT
 </details>
 
 <details>
+<summary>Set vs IMSet arm64 (only 10k elements)</summary>
+
+
+BenchmarkDotNet=v0.13.1, OS=macOS Big Sur 11.4 (20F71) [Darwin 20.5.0]
+Apple M1, 1 CPU, 8 logical and 8 physical cores
+.NET SDK=6.0.101
+[Host]     : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT DEBUG
+DefaultJob : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT
+
+
+|            Method |     N |              Mean |          Error |         StdDev |     Gen 0 |    Gen 1 |   Gen 2 |   Allocated |
+|------------------ |------ |------------------:|---------------:|---------------:|----------:|---------:|--------:|------------:|
+|         SetForAll | 10000 |          6.461 ns |      0.0012 ns |      0.0011 ns |         - |        - |       - |           - |
+|       IMSetForAll | 10000 |        166.015 ns |      0.2731 ns |      0.2555 ns |    0.0305 |        - |       - |        64 B |
+|     SetDifference | 10000 |  3,131,429.785 ns |  6,918.1186 ns |  6,471.2124 ns | 2449.2188 | 183.5938 | 23.4375 | 6,336,155 B |
+|   IMSetDifference | 10000 |  1,592,914.886 ns |  1,212.8501 ns |  1,134.5007 ns |         - |        - |       - |         1 B |
+| HashSetDifference | 10000 |    201,609.411 ns |  2,342.9968 ns |  2,191.6406 ns |         - |        - |       - |        40 B |
+|           SetFold | 10000 |     52,324.380 ns |    999.0360 ns |  1,150.4914 ns |         - |        - |       - |           - |
+|         IMSetFold | 10000 |    148,677.730 ns |    228.7836 ns |    202.8107 ns |         - |        - |       - |           - |
+|            SetMap | 10000 |  5,955,115.169 ns | 22,969.8606 ns | 21,486.0218 ns | 2484.3750 | 273.4375 | 62.5000 | 7,936,824 B |
+|          IMSetMap | 10000 | 10,792,658.648 ns | 32,767.4169 ns | 27,362.2771 ns |  406.2500 | 156.2500 | 46.8750 | 1,622,458 B |
+|         SetFilter | 10000 |  1,692,445.318 ns |  4,264.9830 ns |  3,780.7964 ns | 1466.7969 | 173.8281 | 19.5313 | 3,309,895 B |
+|       IMSetFilter | 10000 |    440,110.136 ns |    172.4233 ns |    143.9812 ns |  174.3164 |  86.9141 |       - |   372,104 B |
+|          SetUnion | 10000 |  2,839,920.042 ns | 19,343.9698 ns | 18,094.3614 ns |  933.5938 | 265.6250 | 42.9688 | 3,074,361 B |
+|        IMSetUnion | 10000 |  3,184,543.216 ns | 24,426.0319 ns | 22,848.1254 ns |  230.4688 | 113.2813 |       - |   898,451 B |
+|      SetIntersect | 10000 |    668,237.850 ns |    310.2010 ns |    274.9851 ns |         - |        - |       - |        41 B |
+|    IMSetIntersect | 10000 |    707,586.301 ns |  1,065.7067 ns |    996.8627 ns |         - |        - |       - |         1 B |
+|      SetSingleton | 10000 |         24.001 ns |      0.0759 ns |      0.0710 ns |    0.0497 |        - |       - |       104 B |
+|    IMSetSingleton | 10000 |         29.612 ns |      0.0547 ns |      0.0512 ns |    0.0535 |        - |       - |       112 B |
+|         SetMinMax | 10000 |         76.170 ns |      0.0621 ns |      0.0581 ns |    0.0688 |        - |       - |       144 B |
+|       IMSetMinMax | 10000 |         36.635 ns |      0.0445 ns |      0.0417 ns |    0.0229 |        - |       - |        48 B |
+</details>
+
+<details>
 <summary>Map vs IMMap</summary>
 
 
@@ -102,6 +136,31 @@ DefaultJob : .NET 6.0.0 (6.0.21.52210), X64 RyuJIT
 | IMMapFilter | 10000 |   253,876.10 ns | 3,118.289 ns | 2,916.850 ns |       - |       - |      56 B |
 
 </details>
+
+<details>
+<summary>Map vs IMMap arm64  (only 10k elements)</summary>
+
+
+BenchmarkDotNet=v0.13.1, OS=macOS Big Sur 11.4 (20F71) [Darwin 20.5.0]
+Apple M1, 1 CPU, 8 logical and 8 physical cores
+.NET SDK=6.0.101
+[Host]     : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT DEBUG
+DefaultJob : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT
+
+
+|      Method |     N |          Mean |        Error |       StdDev |   Gen 0 |   Gen 1 | Allocated |
+|------------ |------ |--------------:|-------------:|-------------:|--------:|--------:|----------:|
+|   MapForAll | 10000 |      33.96 ns |     0.007 ns |     0.006 ns |       - |       - |         - |
+| IMMapForAll | 10000 |     274.52 ns |     0.156 ns |     0.146 ns |  0.0839 |       - |     176 B |
+|     MapFold | 10000 |   5,810.08 ns |    56.057 ns |    49.693 ns |       - |       - |         - |
+|   IMMapFold | 10000 | 133,873.38 ns |   134.477 ns |   125.790 ns |       - |       - |         - |
+|      MapMap | 10000 | 170,313.68 ns | 1,675.699 ns | 1,567.450 ns | 86.9141 | 42.7246 | 300,680 B |
+|    IMMapMap | 10000 | 916,626.19 ns | 1,900.077 ns | 1,777.334 ns | 62.5000 | 31.2500 | 332,057 B |
+|   MapFilter | 10000 |  35,570.35 ns |    87.251 ns |    81.614 ns | 28.1372 |       - |  58,880 B |
+| IMMapFilter | 10000 | 148,497.64 ns |   191.192 ns |   169.487 ns |       - |       - |      56 B |
+
+</details>
+
 
 <details>
 <summary>List vs IMList</summary>
@@ -180,4 +239,50 @@ AMD Ryzen 7 3800X, 1 CPU, 16 logical and 8 physical cores
 |   IMListTryFind | 10000 |       196.832 ns |      1.4203 ns |      1.3286 ns |   0.0134 |       - |       112 B |
 |     ListTryPick | 10000 |    19,120.332 ns |      3.9165 ns |      3.4719 ns |        - |       - |           - |
 |   IMListTryPick | 10000 | 2,280,770.898 ns | 17,818.7166 ns | 16,667.6386 ns | 574.2188 |       - | 4,807,707 B |
+</details>
+
+<details>
+<summary>List vs IMList arm64 (only 10k elements)</summary>
+BenchmarkDotNet=v0.13.1, OS=macOS Big Sur 11.4 (20F71) [Darwin 20.5.0]
+Apple M1, 1 CPU, 8 logical and 8 physical cores
+.NET SDK=6.0.101
+[Host]     : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT DEBUG
+DefaultJob : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT
+
+
+|          Method |     N |             Mean |         Error |        StdDev |     Gen 0 |    Gen 1 |  Gen 2 |   Allocated |
+|---------------- |------ |-----------------:|--------------:|--------------:|----------:|---------:|-------:|------------:|
+|      ListForAll | 10000 |         3.501 ns |     0.0014 ns |     0.0012 ns |         - |        - |      - |           - |
+|    IMListForAll | 10000 |       176.597 ns |     0.1275 ns |     0.1193 ns |    0.0420 |        - |      - |        88 B |
+|      ListChoose | 10000 |   138,807.061 ns | 1,685.8734 ns | 1,494.4829 ns |   99.6094 |  43.2129 |      - |   277,312 B |
+|    IMListChoose | 10000 |   905,890.720 ns | 1,137.7888 ns | 1,064.2883 ns |  136.7188 |  68.3594 |      - |   360,577 B |
+|   IMListChoose2 | 10000 |   449,596.868 ns | 6,978.5959 ns | 6,527.7830 ns |  173.8281 |  81.0547 |      - |   468,960 B |
+|      ListFilter | 10000 |    87,201.114 ns |   272.2835 ns |   254.6942 ns |   75.3174 |  37.3535 |      - |   160,704 B |
+|    IMListFilter | 10000 | 1,647,542.426 ns | 4,868.4270 ns | 4,553.9297 ns |  126.9531 |  58.5938 |      - |   341,393 B |
+|        ListSkip | 10000 |         9.374 ns |     0.0017 ns |     0.0016 ns |         - |        - |      - |           - |
+|      IMListSkip | 10000 |     1,246.338 ns |     7.6844 ns |     7.1880 ns |    0.4234 |        - |      - |       888 B |
+|     ListSplitAt | 10000 |       579.256 ns |     0.9413 ns |     0.8344 ns |    1.5450 |        - |      - |     3,232 B |
+|   IMListSplitAt | 10000 | 1,079,216.699 ns | 1,482.0513 ns | 1,313.7999 ns |  228.5156 |        - |      - |   478,929 B |
+|        ListFold | 10000 |    14,539.402 ns |    12.2001 ns |    10.8151 ns |         - |        - |      - |           - |
+|      IMListFold | 10000 |   151,536.101 ns |   268.0229 ns |   250.7088 ns |         - |        - |      - |           - |
+|      ListReduce | 10000 |    14,501.225 ns |     1.9178 ns |     1.6014 ns |         - |        - |      - |           - |
+|    IMListReduce | 10000 |   208,349.118 ns |   455.2975 ns |   425.8855 ns |         - |        - |      - |       160 B |
+|         ListMap | 10000 |   854,008.222 ns | 5,420.7452 ns | 4,805.3494 ns |  259.7656 | 126.9531 | 2.9297 | 1,199,499 B |
+|       IMListMap | 10000 | 1,766,944.281 ns | 7,276.1121 ns | 5,680.7098 ns |  447.2656 | 226.5625 | 5.8594 | 1,439,709 B |
+|      ListAppend | 10000 |   144,492.752 ns |    75.1247 ns |    70.2717 ns |  152.3438 |  76.1719 |      - |   320,000 B |
+|    IMListAppend | 10000 |     1,696.493 ns |     2.6576 ns |     2.3559 ns |    0.6924 |        - |      - |     1,448 B |
+|   ListSingleton | 10000 |        12.967 ns |     0.0289 ns |     0.0270 ns |    0.0306 |        - |      - |        64 B |
+| IMListSingleton | 10000 |        27.148 ns |     0.0758 ns |     0.0709 ns |    0.0497 |        - |      - |       104 B |
+|         ListSum | 10000 |    11,858.574 ns |     1.0720 ns |     0.8952 ns |         - |        - |      - |           - |
+|       IMListSum | 10000 |   118,493.395 ns |   184.7172 ns |   172.7846 ns |         - |        - |      - |           - |
+|       ListSumBy | 10000 |    11,903.796 ns |     2.6821 ns |     2.5088 ns |         - |        - |      - |           - |
+|     IMListSumBy | 10000 |   117,570.069 ns |    74.0369 ns |    61.8241 ns |         - |        - |      - |           - |
+|    ListContains | 10000 |   266,877.184 ns |   110.9259 ns |    98.3329 ns |  229.4922 |        - |      - |   480,000 B |
+|  IMListContains | 10000 |    40,463.584 ns |    28.6924 ns |    26.8389 ns |         - |        - |      - |           - |
+|        ListInit | 10000 |   124,438.118 ns |   156.3578 ns |   146.2572 ns |   15.1367 |        - |      - |    32,000 B |
+|      IMListInit | 10000 |   224,988.652 ns |   132.2818 ns |   117.2644 ns |   22.9492 |        - |      - |    48,048 B |
+|     ListTryFind | 10000 |        13.997 ns |     0.0077 ns |     0.0072 ns |    0.0115 |        - |      - |        24 B |
+|   IMListTryFind | 10000 |       276.553 ns |     0.2485 ns |     0.2325 ns |    0.0534 |        - |      - |       112 B |
+|     ListTryPick | 10000 |    15,831.777 ns |     9.3585 ns |     8.7539 ns |         - |        - |      - |           - |
+|   IMListTryPick | 10000 | 1,868,420.660 ns | 3,010.7543 ns | 2,816.2614 ns | 2298.8281 |        - |      - | 4,807,705 B |
 </details>
