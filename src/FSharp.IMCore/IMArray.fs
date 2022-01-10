@@ -50,8 +50,7 @@ module IMArray =
         
     [<CompiledName("Map")>]
     let inline map ([<InlineIfLambda>] mapping:'T -> 'U) (array: IMArray<'T>) :IMArray<'U>=
-        let inputLength = array.Length
-        let result = IMArray.CreateBuilder(inputLength)
-        Parallel.For(0, inputLength, fun i ->
-            result.Add(mapping array.[i])) |> ignore
+        let result = IMArray.CreateBuilder(array.Length)
+        for k in array do
+            result.Add(mapping k)
         result.ToImmutable()
