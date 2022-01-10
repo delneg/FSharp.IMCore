@@ -6,6 +6,8 @@ open FSharp.IMCore
 let fake = Faker()
 let inline filterPred (x:int64) = x % 2L = 0L
 
+let inline mapPred (x:int64) = x / 2L
+
 [<PlainExporter; MemoryDiagnoser>]
 type CustomSet() =
     [<DefaultValue; Params(10000)>]
@@ -267,27 +269,48 @@ type CustomArray() =
         let first = [|for _ in 1..this.N do fake.Random.Long()|]
         nums <-  first
         numsNew <- first |> IMArray.ofArray
-        
-    [<Benchmark>]
-    member _.ArrayFilter() = Array.filter (fun x -> x % 2L = 0L) nums
-    [<Benchmark>]
-    member _.IMArrayFilter() =  IMArray.filter (fun x -> x % 2L = 0L) numsNew
+//        
+//    [<Benchmark>]
+//    member _.ArrayFilter() = Array.filter (fun x -> x % 2L = 0L) nums
+//    [<Benchmark>]
+//    member _.IMArrayFilter() =  IMArray.filter (fun x -> x % 2L = 0L) numsNew
+//    [<Benchmark>]
+//    member _.IMArrayFilter2() =  IMArray.filter2 (fun x -> x % 2L = 0L) numsNew
+//    
+//    [<Benchmark>]
+//    member _.IMArrayFilter3() =  IMArray.filter3 (fun x -> x % 2L = 0L) numsNew
     
-    [<Benchmark>]
-    member _.ArrayFold() = Array.fold (+) 0L nums
-    [<Benchmark>]
-    member _.IMArrayFold() =  IMArray.fold (+) 0L numsNew
+//    [<Benchmark>]
+//    member _.ArrayFold() = Array.fold (+) 0L nums
+//    [<Benchmark>]
+//    member _.IMArrayFold() =  IMArray.fold (+) 0L numsNew
 
     [<Benchmark>]
     member _.ArrayMap() = Array.map (fun value -> value / 2L) nums
     [<Benchmark>]
     member _.IMArrayMap() = IMArray.map (fun value -> value / 2L) numsNew
+    [<Benchmark>]
+    member _.IMArrayMap2() = IMArray.map2 (fun value -> value / 2L) numsNew
     
 
 [<EntryPoint>]
 let main argv =
+    let a = [|1L;2L;3L;4L;5L;6L;7L;8L;9L;10L |]
+//
+//    let r1 = a |> Array.map mapPred
+//    let r2 = a  |> IMArray.ofArray|> IMArray.map mapPred
+//    let r3 = a  |> IMArray.ofArray |> IMArray.map2 mapPred
+//    printfn $"%A{r1}"
+//    printfn $"%A{r2}"
+//    printfn $"%A{r3}"
+//    printfn $"%A{a |> Array.filter filterPred}"
+//    printfn $"%A{a  |> IMArray.ofArray|> IMArray.filter filterPred}"
+//    printfn $"%A{a  |> IMArray.ofArray |> IMArray.filter2 filterPred}"
+//    printfn $"%A{a  |> IMArray.ofArray |> IMArray.filter3 filterPred}"
 //    let sets = BenchmarkRunner.Run<CustomSet>()
 //    let maps = BenchmarkRunner.Run<CustomMap>()
 //    let lists = BenchmarkRunner.Run<CustomList>()
     let arrays = BenchmarkRunner.Run<CustomArray>()
+    
+    
     0 // return an integer exit code
