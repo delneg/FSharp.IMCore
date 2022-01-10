@@ -30,57 +30,57 @@ type CustomSet() =
         numsHS <- first |> HashSet
         nums2HS <- second |> HashSet
         
-//    [<Benchmark>]
-//    member _.SetForAll() = Set.forall (fun x -> x > 0L) nums
-//    [<Benchmark>]
-//    member _.IMSetForAll() =  IMSet.forall (fun x -> x > 0L) numsNew
-//    
-//    [<Benchmark>]
-//    member _.SetDifference() =
-//        Set.difference nums nums2
-//    [<Benchmark>]
-//    member _.IMSetDifference() =
-//        IMSet.difference numsNew nums2New
-//        
-//    [<Benchmark>]
-//    member _.HashSetDifference() = numsHS.ExceptWith(nums2HS)
-//    
+    [<Benchmark>]
+    member _.SetForAll() = Set.forall (fun x -> x > 0L) nums
+    [<Benchmark>]
+    member _.IMSetForAll() =  IMSet.forall (fun x -> x > 0L) numsNew
+    
+    [<Benchmark>]
+    member _.SetDifference() =
+        Set.difference nums nums2
+    [<Benchmark>]
+    member _.IMSetDifference() =
+        IMSet.difference numsNew nums2New
+        
+    [<Benchmark>]
+    member _.HashSetDifference() = numsHS.ExceptWith(nums2HS)
+    
     
     [<Benchmark>]
     member _.SetFold() = Set.fold (fun x y -> x + y / 2L) 0L nums
     [<Benchmark>]
     member _.IMSetFold() = IMSet.fold (fun x y -> x + y / 2L) 0L numsNew
     
-//    [<Benchmark>]
-//    member _.SetMap() = Set.map string nums
-//    [<Benchmark>]
-//    member _.IMSetMap() = IMSet.map string numsNew
-//    
-//    [<Benchmark>]
-//    member _.SetFilter() = Set.filter filterPred nums
-//    [<Benchmark>]
-//    member _.IMSetFilter() = IMSet.filter filterPred numsNew
-//    
-//    [<Benchmark>]
-//    member _.SetUnion() = Set.union nums nums2
-//    [<Benchmark>]
-//    member _.IMSetUnion() = IMSet.union numsNew nums2New
-//    
-//    [<Benchmark>]
-//    member _.SetIntersect() = Set.intersect nums nums2
-//    [<Benchmark>]
-//    member _.IMSetIntersect() = IMSet.intersect numsNew nums2New
-//    
-//    [<Benchmark>]
-//    member _.SetSingleton() = Set.singleton (nums,nums2)
-//    [<Benchmark>]
-//    member _.IMSetSingleton() = IMSet.singleton (numsNew,nums2New)
-//    
-//    [<Benchmark>]
-//    member _.SetMinMax() = Set.minElement nums, Set.minElement nums2, Set.maxElement nums, Set.maxElement nums2
-//    [<Benchmark>]
-//    member _.IMSetMinMax() = IMSet.minElement numsNew, IMSet.minElement nums2New, IMSet.maxElement numsNew, IMSet.maxElement nums2New
-//    
+    [<Benchmark>]
+    member _.SetMap() = Set.map string nums
+    [<Benchmark>]
+    member _.IMSetMap() = IMSet.map string numsNew
+    
+    [<Benchmark>]
+    member _.SetFilter() = Set.filter filterPred nums
+    [<Benchmark>]
+    member _.IMSetFilter() = IMSet.filter filterPred numsNew
+    
+    [<Benchmark>]
+    member _.SetUnion() = Set.union nums nums2
+    [<Benchmark>]
+    member _.IMSetUnion() = IMSet.union numsNew nums2New
+    
+    [<Benchmark>]
+    member _.SetIntersect() = Set.intersect nums nums2
+    [<Benchmark>]
+    member _.IMSetIntersect() = IMSet.intersect numsNew nums2New
+    
+    [<Benchmark>]
+    member _.SetSingleton() = Set.singleton (nums,nums2)
+    [<Benchmark>]
+    member _.IMSetSingleton() = IMSet.singleton (numsNew,nums2New)
+    
+    [<Benchmark>]
+    member _.SetMinMax() = Set.minElement nums, Set.minElement nums2, Set.maxElement nums, Set.maxElement nums2
+    [<Benchmark>]
+    member _.IMSetMinMax() = IMSet.minElement numsNew, IMSet.minElement nums2New, IMSet.maxElement numsNew, IMSet.maxElement nums2New
+    
 
 
 [<PlainExporter; MemoryDiagnoser>]
