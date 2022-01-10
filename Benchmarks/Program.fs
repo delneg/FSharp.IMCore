@@ -14,6 +14,9 @@ type CustomSet() =
     let mutable nums2 = Set.empty
     let mutable numsNew = IMSet.empty
     let mutable nums2New = IMSet.empty
+    
+    let mutable numsHS = HashSet<_>()
+    let mutable nums2HS = HashSet<_>()
 
     [<GlobalSetup>]
     member this.Setup() =
@@ -23,6 +26,8 @@ type CustomSet() =
         nums2 <- second |> Set.ofArray
         numsNew <- first |> IMSet.ofArray
         nums2New <- second |> IMSet.ofArray
+        numsHS <- first |> HashSet
+        nums2HS <- second |> HashSet
         
     [<Benchmark>]
     member _.SetForAll() = Set.forall (fun x -> x > 0L) nums
@@ -36,6 +41,10 @@ type CustomSet() =
     member _.IMSetDifference() =
         IMSet.difference numsNew nums2New
         
+    [<Benchmark>]
+    member _.HashSetDifference() = numsHS.ExceptWith(nums2HS)
+    
+    
     [<Benchmark>]
     member _.SetFold() = Set.fold (+) 0L nums
     [<Benchmark>]
@@ -244,7 +253,7 @@ type CustomList() =
 
 [<EntryPoint>]
 let main argv =
-//    let sets = BenchmarkRunner.Run<CustomSet>()
+    let sets = BenchmarkRunner.Run<CustomSet>()
 //    let maps = BenchmarkRunner.Run<CustomMap>()
-    let lists = BenchmarkRunner.Run<CustomList>()
+//    let lists = BenchmarkRunner.Run<CustomList>()
     0 // return an integer exit code
