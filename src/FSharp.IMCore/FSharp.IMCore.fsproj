@@ -26,6 +26,7 @@
     <Compile Include="IMSet.fs" />
     <Compile Include="IMList.fs" />
     <Compile Include="IMMap.fs" />
+    <Compile Include="IMArray.fs" />
   </ItemGroup>
 
   <ItemGroup>
