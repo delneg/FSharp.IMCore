@@ -58,7 +58,7 @@ module IMSet =
     let partition predicate (set: IMSet<'T>) = ((filter predicate set),filter (predicate >> not) set)
 
     [<CompiledName("Fold")>]
-    let fold<'T, 'State  when 'T : comparison> folder (state:'State) (set: IMSet<'T>) =
+    let inline fold<'T, 'State  when 'T : comparison> ([<InlineIfLambda>] folder: 'State -> 'T -> 'State) (state:'State) (set: IMSet<'T>) =
         use mutable e = set.GetEnumerator()
         let f = OptimizedClosures.FSharpFunc<_, _, _>.Adapt folder
         let mutable state = state

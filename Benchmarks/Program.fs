@@ -47,9 +47,9 @@ type CustomSet() =
     
     
     [<Benchmark>]
-    member _.SetFold() = Set.fold (+) 0L nums
+    member _.SetFold() = Set.fold (fun x y -> x + y / 2L) 0L nums
     [<Benchmark>]
-    member _.IMSetFold() = IMSet.fold (+) 0L numsNew
+    member _.IMSetFold() = IMSet.fold (fun x y -> x + y / 2L) 0L numsNew
     
     [<Benchmark>]
     member _.SetMap() = Set.map string nums
@@ -252,9 +252,42 @@ type CustomList() =
 //    
 
 
+    
+[<PlainExporter; MemoryDiagnoser>]
+type CustomArray() =
+    [<DefaultValue; Params(10000)>]
+    val mutable public N : int
+    
+    let mutable nums = Array.empty
+    let mutable numsNew = IMArray.empty
+    
+   
+    [<GlobalSetup>]
+    member this.Setup() =
+        let first = [|for _ in 1..this.N do fake.Random.Long()|]
+        nums <-  first
+        numsNew <- first |> IMArray.ofArray
+        
+    [<Benchmark>]
+    member _.ArrayFilter() = Array.filter (fun x -> x % 2L = 0L) nums
+    [<Benchmark>]
+    member _.IMArrayFilter() =  IMArray.filter (fun x -> x % 2L = 0L) numsNew
+    
+    [<Benchmark>]
+    member _.ArrayFold() = Array.fold (+) 0L nums
+    [<Benchmark>]
+    member _.IMArrayFold() =  IMArray.fold (+) 0L numsNew
+
+    [<Benchmark>]
+    member _.ArrayMap() = Array.map (fun value -> value / 2L) nums
+    [<Benchmark>]
+    member _.IMArrayMap() = IMArray.map (fun value -> value / 2L) numsNew
+    
+
 [<EntryPoint>]
 let main argv =
-    let sets = BenchmarkRunner.Run<CustomSet>()
+//    let sets = BenchmarkRunner.Run<CustomSet>()
 //    let maps = BenchmarkRunner.Run<CustomMap>()
 //    let lists = BenchmarkRunner.Run<CustomList>()
+    let arrays = BenchmarkRunner.Run<CustomArray>()
     0 // return an integer exit code
