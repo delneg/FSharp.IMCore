@@ -1,4 +1,5 @@
-﻿open BenchmarkDotNet.Attributes
+﻿open System.Collections.Generic
+open BenchmarkDotNet.Attributes
 open BenchmarkDotNet.Running
 open Bogus
 open FSharp.IMCore
@@ -7,7 +8,7 @@ let inline filterPred (x:int64) = x % 2L = 0L
 
 [<PlainExporter; MemoryDiagnoser>]
 type CustomSet() =
-    [<DefaultValue; Params(1000,10000)>]
+    [<DefaultValue; Params(10000)>]
     val mutable public N : int
     
     let mutable nums = Set.empty
@@ -84,7 +85,7 @@ type CustomSet() =
 
 [<PlainExporter; MemoryDiagnoser>]
 type CustomMap() =
-    [<DefaultValue; Params(1000,10000)>]
+    [<DefaultValue; Params(10000)>]
     val mutable public N : int
     
     let mutable strs = Map.empty
@@ -123,7 +124,7 @@ type CustomMap() =
     
 [<PlainExporter; MemoryDiagnoser>]
 type CustomList() =
-    [<DefaultValue; Params(1000,10000)>]
+    [<DefaultValue; Params(10000)>]
     val mutable public N : int
     
     let mutable nums = List.empty
