@@ -3,8 +3,8 @@ open System.Collections.Generic
 open System.Collections.Immutable
 
 
-type IMList<'T> = System.Collections.Immutable.ImmutableList<'T>
-type IMList = System.Collections.Immutable.ImmutableList
+type IMList<'T> = ImmutableList<'T>
+type IMList = ImmutableList
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 [<RequireQualifiedAccess>]

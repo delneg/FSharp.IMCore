@@ -99,30 +99,35 @@ type CustomMap() =
         strs <-  first |> Map.ofArray
         strsNew <- first |> IMMap.ofArray
         
-    [<Benchmark>]
-    member _.MapForAll() = Map.forall (fun k v  -> v > 0L) strs
-    [<Benchmark>]
-    member _.IMMapForAll() =  IMMap.forall (fun k v  -> v > 0L) strsNew
-    
+//    [<Benchmark>]
+//    member _.MapForAll() = Map.forall (fun k v  -> v > 0L) strs
+//    [<Benchmark>]
+//    member _.IMMapForAll() =  IMMap.forall (fun k v  -> v > 0L) strsNew
+//    
         
+//    [<Benchmark>]
+//    member _.MapFold() = Map.fold (fun s _ value -> s + value) 0L strs
+//    [<Benchmark>]
+//    member _.IMMapFold() = IMMap.fold (fun s _ value -> s + value) 0L strsNew
+//    
+//    
     [<Benchmark>]
-    member _.MapFold() = Map.fold (fun s _ value -> s + value) 0L strs
+    member _.MapMap() = Map.map (fun _ value -> value * 2L) strs
     [<Benchmark>]
-    member _.IMMapFold() = IMMap.fold (fun s _ value -> s + value) 0L strsNew
+    member _.IMMapMap() = IMMap.map (fun _ value -> value * 2L) strsNew
+    [<Benchmark>]
+    member _.IMMapMap2() = IMMap.map2 (fun _ value -> value * 2L) strsNew
     
+    [<Benchmark>]
+    member _.IMMapMap3() = IMMap.map3 (fun _ value -> value * 2L) strsNew
     
-    [<Benchmark>]
-    member _.MapMap() = Map.map (fun _ value -> string value) strs
-    [<Benchmark>]
-    member _.IMMapMap() = IMMap.map (fun _ value -> string value) strsNew
-    
-    [<Benchmark>]
-    member _.MapFilter() =
-        Map.filter (fun (key:string) _ -> key.Length < 5) strs
-        
-    [<Benchmark>]
-    member _.IMMapFilter() =
-        IMMap.filter (fun (key:string) _ -> key.Length < 5) strsNew
+//    [<Benchmark>]
+//    member _.MapFilter() =
+//        Map.filter (fun (key:string) _ -> key.Length < 5) strs
+//        
+//    [<Benchmark>]
+//    member _.IMMapFilter() =
+//        IMMap.filter (fun (key:string) _ -> key.Length < 5) strsNew
     
 [<PlainExporter; MemoryDiagnoser>]
 type CustomList() =
@@ -287,10 +292,11 @@ type CustomArray() =
 
     [<Benchmark>]
     member _.ArrayMap() = Array.map (fun value -> value / 2L) nums
-    [<Benchmark>]
-    member _.IMArrayMap() = IMArray.map (fun value -> value / 2L) numsNew
-    [<Benchmark>]
-    member _.IMArrayMap2() = IMArray.map2 (fun value -> value / 2L) numsNew
+//    [<Benchmark>]
+//    member _.IMArrayMap() = IMArray.map (fun value -> value / 2L) numsNew
+//    [<Benchmark>]
+//    member _.IMArrayMap2() = IMArray.map2 (fun value -> value / 2L) numsNew
+    
     
 
 [<EntryPoint>]
@@ -308,9 +314,9 @@ let main argv =
 //    printfn $"%A{a  |> IMArray.ofArray |> IMArray.filter2 filterPred}"
 //    printfn $"%A{a  |> IMArray.ofArray |> IMArray.filter3 filterPred}"
 //    let sets = BenchmarkRunner.Run<CustomSet>()
-//    let maps = BenchmarkRunner.Run<CustomMap>()
+    let maps = BenchmarkRunner.Run<CustomMap>()
 //    let lists = BenchmarkRunner.Run<CustomList>()
-    let arrays = BenchmarkRunner.Run<CustomArray>()
+//    let arrays = BenchmarkRunner.Run<CustomArray>()
     
     
     0 // return an integer exit code

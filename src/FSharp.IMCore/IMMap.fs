@@ -1,10 +1,20 @@
 namespace FSharp.IMCore
 
 open System.Collections.Generic
+open Funtom.Linq
 
-type IMMap<'Key,'Value> = System.Collections.Immutable.ImmutableDictionary<'Key,'Value>
-type IMMap = System.Collections.Immutable.ImmutableDictionary
+type IMMap<'Key,'Value> = System.Collections.Immutable.ImmutableSortedDictionary<'Key,'Value>
+type IMMap = System.Collections.Immutable.ImmutableSortedDictionary
 
+//
+//|      Method |     N |        Mean |     Error |    StdDev |   Gen 0 |   Gen 1 | Allocated |
+//|------------ |------ |------------:|----------:|----------:|--------:|--------:|----------:|
+//|     MapFold | 10000 |    14.67 us |  0.124 us |  0.116 us |       - |       - |         - |
+//|   IMMapFold | 10000 |    48.58 us |  0.382 us |  0.339 us |       - |       - |         - |
+//|      MapMap | 10000 |   209.19 us |  2.183 us |  2.042 us | 35.6445 | 17.3340 | 298,944 B |
+//|    IMMapMap | 10000 | 2,508.64 us | 22.058 us | 20.633 us | 35.1563 | 15.6250 | 316,995 B |
+//|   MapFilter | 10000 |    62.03 us |  0.768 us |  0.641 us |  7.0801 |  0.2441 |  59,368 B |
+//| IMMapFilter | 10000 |   151.94 us |  1.780 us |  1.578 us |       - |       - |      64 B |
 
 
 [<RequireQualifiedAccess>]
@@ -62,7 +72,7 @@ module IMMap =
         Seq.exists (fun (KeyValue(key, value)) -> predicate key value) table
 
     [<CompiledName("Filter")>]
-    let filter predicate (table: IMMap<_, _>) :IMMap<_, _>=
+    let inline filter ([<InlineIfLambda>] predicate:'Key -> 'T -> bool) (table: IMMap<_, _>) :IMMap<_, _>=
         let builder = table.ToBuilder()
         for kvp in table do
             if predicate kvp.Key kvp.Value then
@@ -83,14 +93,28 @@ module IMMap =
         IMMap.Empty.SetItems(elements |> Seq.map (fun (key,value) -> KeyValuePair(key,value)))
      
     [<CompiledName("Map")>]
-    let map (mapping:'Key -> 'T -> 'U) (table: IMMap<'Key, 'T>) :IMMap<'Key, 'U>=
+    let inline map ([<InlineIfLambda>] mapping:'Key -> 'T -> 'U) (table: IMMap<'Key, 'T>) :IMMap<'Key, 'U>=
         let builder = IMMap.CreateBuilder()
         for kvp in table do
             builder.[kvp.Key] <- mapping kvp.Key kvp.Value
         builder.ToImmutable()
 
+    [<CompiledName("Map2")>]
+    let inline map2 ([<InlineIfLambda>] mapping:'Key -> 'T -> 'U) (table: IMMap<'Key, 'T>) :IMMap<'Key, 'U>=
+        [|
+            for kvp in table do
+                yield KeyValuePair(kvp.Key, mapping kvp.Key kvp.Value)
+        |] |> IMMap.CreateRange
+        
+    [<CompiledName("Map3")>]
+    let inline map3 ([<InlineIfLambda>] mapping:'Key -> 'T -> 'U) (table: IMMap<'Key, 'T>) :IMMap<'Key, 'U>=
+        let builder = IMMap.CreateBuilder()
+        for kvp in table do
+            builder.Add(KeyValuePair(kvp.Key,mapping kvp.Key kvp.Value))
+        builder.ToImmutable()
+        
     [<CompiledName("Fold")>]
-    let fold<'Key, 'T, 'State when 'Key : comparison> (folder:'State -> 'Key -> 'T -> 'State) (state:'State) (table: IMMap<'Key, 'T>) =
+    let inline fold<'Key, 'T, 'State when 'Key : comparison> ([<InlineIfLambda>] folder:'State -> 'Key -> 'T -> 'State) (state:'State) (table: IMMap<'Key, 'T>) =
         let mutable s = state
         for kvp in table do
             s <- folder s kvp.Key kvp.Value
