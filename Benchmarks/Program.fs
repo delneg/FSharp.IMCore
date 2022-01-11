@@ -274,28 +274,28 @@ type CustomArray() =
         let first = [|for _ in 1..this.N do fake.Random.Long()|]
         nums <-  first
         numsNew <- first |> IMArray.ofArray
-//        
-//    [<Benchmark>]
-//    member _.ArrayFilter() = Array.filter (fun x -> x % 2L = 0L) nums
-//    [<Benchmark>]
-//    member _.IMArrayFilter() =  IMArray.filter (fun x -> x % 2L = 0L) numsNew
-//    [<Benchmark>]
-//    member _.IMArrayFilter2() =  IMArray.filter2 (fun x -> x % 2L = 0L) numsNew
-//    
-//    [<Benchmark>]
-//    member _.IMArrayFilter3() =  IMArray.filter3 (fun x -> x % 2L = 0L) numsNew
+        
+    [<Benchmark>]
+    member _.ArrayFilter() = Array.filter (fun x -> x % 2L = 0L) nums
+    [<Benchmark>]
+    member _.IMArrayFilter() =  IMArray.filter (fun x -> x % 2L = 0L) numsNew
+    [<Benchmark>]
+    member _.IMArrayFilter2() =  IMArray.filter2 (fun x -> x % 2L = 0L) numsNew
     
-//    [<Benchmark>]
-//    member _.ArrayFold() = Array.fold (+) 0L nums
-//    [<Benchmark>]
-//    member _.IMArrayFold() =  IMArray.fold (+) 0L numsNew
+    [<Benchmark>]
+    member _.IMArrayFilter3() =  IMArray.filter3 (fun x -> x % 2L = 0L) numsNew
+    
+    [<Benchmark>]
+    member _.ArrayFold() = Array.fold (+) 0L nums
+    [<Benchmark>]
+    member _.IMArrayFold() =  IMArray.fold (+) 0L numsNew
 
     [<Benchmark>]
     member _.ArrayMap() = Array.map (fun value -> value / 2L) nums
-//    [<Benchmark>]
-//    member _.IMArrayMap() = IMArray.map (fun value -> value / 2L) numsNew
-//    [<Benchmark>]
-//    member _.IMArrayMap2() = IMArray.map2 (fun value -> value / 2L) numsNew
+    [<Benchmark>]
+    member _.IMArrayMap() = IMArray.map (fun value -> value / 2L) numsNew
+    [<Benchmark>]
+    member _.IMArrayMap2() = IMArray.map2 (fun value -> value / 2L) numsNew
     
     
 
@@ -314,9 +314,9 @@ let main argv =
 //    printfn $"%A{a  |> IMArray.ofArray |> IMArray.filter2 filterPred}"
 //    printfn $"%A{a  |> IMArray.ofArray |> IMArray.filter3 filterPred}"
 //    let sets = BenchmarkRunner.Run<CustomSet>()
-    let maps = BenchmarkRunner.Run<CustomMap>()
+//    let maps = BenchmarkRunner.Run<CustomMap>()
 //    let lists = BenchmarkRunner.Run<CustomList>()
-//    let arrays = BenchmarkRunner.Run<CustomArray>()
+    let arrays = BenchmarkRunner.Run<CustomArray>()
     
     
     0 // return an integer exit code
