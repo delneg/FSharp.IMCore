@@ -286,3 +286,25 @@ DefaultJob : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT
 |     ListTryPick | 10000 |    15,831.777 ns |     9.3585 ns |     8.7539 ns |         - |        - |      - |           - |
 |   IMListTryPick | 10000 | 1,868,420.660 ns | 3,010.7543 ns | 2,816.2614 ns | 2298.8281 |        - |      - | 4,807,705 B |
 </details>
+
+<details>
+<summary>Array vs IMArray arm64 (only 10k elements)</summary>
+BenchmarkDotNet=v0.13.1, OS=macOS Big Sur 11.4 (20F71) [Darwin 20.5.0]
+Apple M1, 1 CPU, 8 logical and 8 physical cores
+.NET SDK=6.0.101
+  [Host]     : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT DEBUG
+  DefaultJob : .NET 6.0.1 (6.0.121.56705), Arm64 RyuJIT
+
+
+|         Method |     N |       Mean |     Error |    StdDev |     Median |    Gen 0 | Allocated |
+|--------------- |------ |-----------:|----------:|----------:|-----------:|---------:|----------:|
+|    ArrayFilter | 10000 |  22.424 us | 0.2370 us | 0.1979 us |  22.416 us |  19.5923 |  41,344 B |
+|  IMArrayFilter | 10000 |  35.834 us | 0.9792 us | 2.8873 us |  36.817 us |  55.5420 | 119,984 B |
+| IMArrayFilter2 | 10000 | 117.215 us | 0.3664 us | 0.3427 us | 117.110 us |  55.5420 | 120,136 B |
+| IMArrayFilter3 | 10000 |  71.905 us | 0.0527 us | 0.0493 us |  71.905 us | 137.8174 | 291,576 B |
+|      ArrayFold | 10000 |  14.354 us | 0.0023 us | 0.0022 us |  14.354 us |        - |         - |
+|    IMArrayFold | 10000 |  14.149 us | 0.0012 us | 0.0010 us |  14.149 us |        - |         - |
+|       ArrayMap | 10000 |   8.900 us | 0.0245 us | 0.0229 us |   8.905 us |  37.0331 |  80,024 B |
+|     IMArrayMap | 10000 |  26.921 us | 0.0683 us | 0.0639 us |  26.933 us |  74.9817 | 160,080 B |
+|    IMArrayMap2 | 10000 |  18.222 us | 0.0118 us | 0.0105 us |  18.223 us |  37.0178 |  80,088 B |
+</details>
